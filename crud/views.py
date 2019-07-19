@@ -1,8 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from .models import Message
 
 def index(request):
-    return render(request, 'crud/index.html', {})
+    d = {
+        'messages': Message.objects.all(),
+    }
+    return render(request, 'crud/index.html', d)
 
 def add(request):
     return render(request, 'crud/edit.html', {})
