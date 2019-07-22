@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.urls import reverse
 
 class CrudAppTest(TestCase):
 
@@ -32,7 +33,7 @@ class CrudAppTest(TestCase):
 
     def test_add_03(self):
         response = self.client.post('/crud/add/', {"message": ""})
-        print("\nresponse:\n{}".format(response.content))
+        # print("\nresponse:\n{}".format(response.content))
         self.assertTemplateUsed(response, 'crud/edit.html')
         self.assertContains(response, r'<a href="/crud/">一覧画面へ</a>')
         self.assertContains(response, r'<label>メッセージ<input type="text" name="message" maxlength="255" required id="id_message"></label>')
@@ -44,6 +45,20 @@ class CrudAppTest(TestCase):
         self.assertTemplateUsed(response, 'crud/edit.html')
         self.assertContains(response, r'<label>メッセージ<input type="text" name="message" maxlength="255" required id="id_message" value="Test Message01"></label>', html=True)
         # self.assertContains(response, "edit")
+
+    def test_edit_02(self):
+        response = self.client.get('/crud/edit/99')
+        # print("\nresponse:\n{}".format(response))
+        self.assertEquals(response.status_code, 404)
+
+    def test_edit_03(self):
+        response = self.client.post('/crud/edit/1', {"message": "Test Message01-1"})
+        # print("\nresponse:\n{}".format(response))
+        self.assertRedirects(response, reverse('crud:index'))
+
+        response2 = self.client.get('/crud/')
+        self.assertContains(response2, r'<td>Test Message01-1</td>', html=True)
+        self.assertNotContains(response2, r'<tr><td>Test Message01</td><td>2019年7月19日0:00</td><td>2019年7月19日0:05</td><td><a href="/crud/edit/1">更新画面へ</a></td></tr>', html=True)
 
     def test_delete_01(self):
         response = self.client.get('/crud/delete/')
