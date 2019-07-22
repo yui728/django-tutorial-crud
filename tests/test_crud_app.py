@@ -22,11 +22,13 @@ class CrudAppTest(TestCase):
         # self.assertContains(response, "edit")
         self.assertContains(response, r'<a href="/crud/">一覧画面へ</a>')
         self.assertContains(response, r'<label>メッセージ<input type="text" name="message" maxlength="255" required id="id_message"></label>')
-        self.assertNotContains(response, r'<ul class="errorlist">', html=True)
+        self.assertFormError(response, 'form', 'message', None)
 
     def test_add_02(self):
         response = self.client.post('/crud/add/', {"message": "Test Message03"})
         self.assertRedirects(response, '/crud/')
+        response2 = self.client.get('/crud/')
+        self.assertContains(response2, r"<td>Test Message01</td>", html=True)
 
     def test_add_03(self):
         response = self.client.post('/crud/add/', {"message": ""})
@@ -34,7 +36,7 @@ class CrudAppTest(TestCase):
         self.assertTemplateUsed(response, 'crud/edit.html')
         self.assertContains(response, r'<a href="/crud/">一覧画面へ</a>')
         self.assertContains(response, r'<label>メッセージ<input type="text" name="message" maxlength="255" required id="id_message"></label>')
-        # self.assertInHTML(r'<ul class="errorlist">', response.content)
+        self.assertFormError(response, 'form', 'message', "このフィールドは必須です。")
 
     def test_edit_01(self):
         response = self.client.get('/crud/edit/1')
