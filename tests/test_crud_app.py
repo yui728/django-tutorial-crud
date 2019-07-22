@@ -10,9 +10,9 @@ class CrudAppTest(TestCase):
         self.assertTemplateUsed(response, 'crud/index.html')
         # self.assertContains(response, "index")
         # print("\nresponse:\n{}".format(response.content))
-        self.assertContains(response, r"<thead><tr><th>message</th><th>created_at</th><th>updated_at</th></tr></thead>", html=True)
-        self.assertContains(response, r"<tr><td>Test Message01</td><td>2019年7月19日0:00</td><td>2019年7月19日0:05</td></tr>", html=True)
-        self.assertContains(response, r"<tr><td>Test Message02</td><td>2019年7月19日1:00</td><td>2019年7月19日1:05</td></tr>", html=True)
+        self.assertContains(response, r'<thead><tr><th>message</th><th>created_at</th><th>updated_at</th><th>  </th></tr></thead>', html=True)
+        self.assertContains(response, r'<tr><td>Test Message01</td><td>2019年7月19日0:00</td><td>2019年7月19日0:05</td><td><a href="/crud/edit/1">更新画面へ</a></td></tr>', html=True)
+        self.assertContains(response, r'<tr><td>Test Message02</td><td>2019年7月19日1:00</td><td>2019年7月19日1:05</td><td><a href="/crud/edit/2">更新画面へ</a></td></tr>', html=True)
         self.assertContains(response, r'<a href="/crud/add/">登録画面へ</a>', html=True)
 
     def test_add_01(self):
@@ -42,6 +42,7 @@ class CrudAppTest(TestCase):
         response = self.client.get('/crud/edit/1')
         # print("\nresponse:\n{}".format(response))
         self.assertTemplateUsed(response, 'crud/edit.html')
+        self.assertContains(response, r'<label>メッセージ<input type="text" name="message" maxlength="255" required id="id_message" value="Test Message01"></label>', html=True)
         # self.assertContains(response, "edit")
 
     def test_delete_01(self):
