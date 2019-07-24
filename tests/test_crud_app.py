@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
+from with_asserts.mixin import AssertHTMLMixin
 
-class CrudAppTest(TestCase):
+class CrudAppTest(TestCase, AssertHTMLMixin):
 
     fixtures =["crud_testdata.json"] 
 
@@ -12,9 +13,12 @@ class CrudAppTest(TestCase):
         # self.assertContains(response, "index")
         # print("\nresponse:\n{}".format(response.content))
         self.assertContains(response, r'<thead><tr><th>message</th><th>created_at</th><th>updated_at</th><th>  </th></tr></thead>', html=True)
-        self.assertContains(response, r'<tr><td>Test Message01</td><td>2019年7月19日0:00</td><td>2019年7月19日0:05</td><td><a href="/crud/edit/1">更新画面へ</a></td></tr>', html=True)
-        self.assertContains(response, r'<tr><td>Test Message02</td><td>2019年7月19日1:00</td><td>2019年7月19日1:05</td><td><a href="/crud/edit/2">更新画面へ</a></td></tr>', html=True)
+        self.assertContains(response, r'<tr><td><input type="checkbox" name="delete_ids" value="1" /></td><td>Test Message01</td><td>2019年7月19日0:00</td><td>2019年7月19日0:05</td><td><a href="/crud/edit/1">更新画面へ</a></td></tr>', html=True)
+        self.assertContains(response, r'<tr><td><input type="checkbox" name="delete_ids" value="2" /></td><td>Test Message02</td><td>2019年7月19日1:00</td><td>2019年7月19日1:05</td><td><a href="/crud/edit/2">更新画面へ</a></td></tr>', html=True)
         self.assertContains(response, r'<a href="/crud/add/">登録画面へ</a>', html=True)
+        # delete_url = reverse('crud:delete')ß
+        self.assertHTML(response, 'form[method="POST", action="/crud/delete/"]')
+        self.assertHTML(response, 'input[type="submit", value="削除"]')
 
     def test_add_01(self):
         response = self.client.get('/crud/add/')
@@ -61,6 +65,12 @@ class CrudAppTest(TestCase):
         self.assertNotContains(response2, r'<tr><td>Test Message01</td><td>2019年7月19日0:00</td><td>2019年7月19日0:05</td><td><a href="/crud/edit/1">更新画面へ</a></td></tr>', html=True)
 
     def test_delete_01(self):
-        response = self.client.get('/crud/delete/')
+        response = self.client.post('/crud/delete/', {"delete_ids": [1, 2]})
+        self.assertRedirects(response, '/crud/')
         # print("\nresponse:\n{}".format(response))
-        self.assertContains(response, 'Delete')
+        # self.assertContains(response, 'Delete')
+
+    def test_delete_02(self):
+        response = self.client.get('/crud/delete/', {"delete_ids": [1, 2]})
+        print('¥nresponse¥n{}'.format(response))
+        self.assertEqual(response.status_code, 405)
