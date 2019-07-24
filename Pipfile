@@ -4,6 +4,8 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pylint = "*"
+django-with-asserts = "*"
 
 [packages]
 pytz = "==2019.1"
