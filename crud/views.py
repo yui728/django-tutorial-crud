@@ -3,6 +3,7 @@ from django.shortcuts import (
     redirect,
     get_object_or_404
      )
+from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from .models import Message
 from .forms import MessageForm 
@@ -41,5 +42,9 @@ def edit(request, editting_id):
     }
     return render(request, 'crud/edit.html', d)
 
+@require_POST
 def delete(request):
-    return HttpResponse('Delete')
+    delete_ids = request.POST.getlist("delete_ids")
+    if delete_ids:
+        Message.objects.filter(id__in=delete_ids).delete()
+    return redirect('crud:index')

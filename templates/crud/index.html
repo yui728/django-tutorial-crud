@@ -2,7 +2,7 @@
 
 {% block body %}
     <a href="{% url 'crud:add' %}">登録画面へ</a>
-    <form method="POST" action="">
+    <form method="POST" action="{% url 'crud:delete' %}">
         <table style="border: solid 1px;">
             <thead>
                 <tr>
@@ -15,6 +15,7 @@
             <tbody>
                 {% for message in messages %}
                     <tr>
+                        <td><input type="checkbox" name="delete_ids" value="{{ message.id }}"/></td>
                         <td>{{ message.message }}</td>
                         <td>{{ message.created_at }}</td>
                         <td>{{ message.updated_at }}</td>
@@ -23,5 +24,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% csrf_token %}
+        <input type="submit" value="削除" />
     </form>
 {% endblock %}
