@@ -10,7 +10,7 @@ django-with-asserts = "*"
 [packages]
 pytz = "==2019.1"
 sqlparse = "==0.3.0"
-Django = "==2.2.3"
+Django = "==2.2.21"
 
 [requires]
 python_version = "3.7"
